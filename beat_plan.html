@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script 
+		src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCE4Nv8L9jcAZcZjra2WxHhkbkZUtKlTz8&sensor=false&libraries=drawing">
+		</script>
+		
+		<script src="js/main.js"></script>
+		<script src="js/opt_1.js"></script>
+		<script src="js/opt_2.js"></script>
+		<script src="js/opt_3.js"></script>
+		
+	</head>
+	<body>
+		
+		<div id="sel_city" style="position:absolute;/*width:950px;height:650px;*/visibility:visible;">
+			<p>Select Your CITY</p>
+			<select id="city_id">
+			  <option value="0">All</option>
+			  <option value="1">Delhi</option>
+			  <option value="2">Faridabad</option>
+			  <option value="3">Ghaziabad</option>
+			  <option value="4">Greater Noida</option>
+			  <option value="5">Gurgaon</option>
+			  <option value="6">New Delhi</option>
+			  <option value="7">Noida</option>
+			  <option value="8">Sahibabad</option>
+			</select>
+			<input type="button" onclick="go()" value="GO">
+		</div>
+		
+		<div id="gMap" style="position: absolute;width:950px;height:650px;visibility:hidden;"></div>
+		<div id="gMap1" style="position: absolute;width:950px;height:650px;visibility:hidden;"></div>
+		<div id="gMap2" style="position: absolute;width:950px;height:650px;visibility:hidden;"></div>
+		<div id="gMap3" style="position: absolute;width:950px;height:650px;visibility:hidden;"></div>
+		
+		<div id="sel_option" style="width:360px;position:absolute;top:5%;right:2%;visibility:hidden;">
+				<input type="button" onclick="opt1()" value="Create yourself"><br>
+				<input type="button" onclick="opt2()" value="User defined"><br>
+				<input type="button" onclick="opt3()" value="System recommended">
+		</div>
+		
+		<div id="form1" style="width:360px;position:absolute;top:5%;right:2%;visibility:hidden;">
+			<form id="form1_1">
+				FSE Id : <input type="text" name="fse"><br><br>
+				Day of visit : <input type="text" name="day"><br><br>
+				<input type="button" onclick="done1_1()" value="Done"><br><br>
+				<p id="dist1_1"></p>
+			</form>
+		</div>
+		
+		<div id="form2" style="width:360px;position:absolute;top:5%;right:2%;visibility:hidden;">
+			<form id="form2_1" style="visibility:hidden;">
+				No. of FSEs : <input type="text" name="fse"><br><br>
+				Include KROs <input type="checkbox" id="kro" value="yes"><br><br>
+				<input type="button" onclick="reset_form2_1()" value="Reset">
+				<input type="button" onclick="submit_form2_1()" value="Submit">
+			</form>
+			<form id="form2_2" style="visibility:hidden;">
+				<p>Add KRO</p>
+					LAT : <input type="text" name="lat"><span id="ent_lat" style="visibility:hidden;">Enter LAT</span><br><br>
+				   LNG : <input type="text" name="lng"><span id="ent_lng" style="visibility:hidden;">Enter LNG</span><br><br>
+				   <input type="button" onclick="addMoreKro()" value="Add More">
+				   <input type="button" onclick="done2_1()" value="Done">
+				   <span id="LatLng"></span><br><br>
+				   <span id="fse"></span><br><br>
+				   <span id="day"></span><br><br>
+				</p>
+			</form>
+			<form id="form2_3" style="visibility:hidden;position:relative;top:-112%">
+				<p>No. of working days : <input type="text" name="work"><br><br>
+				<p>Set Frequency</p>
+				<p>1. Others: <input type="text" name="kros"> days a week</p>
+				<p id="frq" style="visibility:hidden;">2. KROs: <input type="text" name="others"> days a week</p>
+				   <input type="button" onclick="done2_2()" value="Done">
+				</p>
+			</form>
+		</div>
+		
+		<div id="form3" style="width:360px;position:absolute;top:5%;right:2%;visibility:hidden;">
+			<form id="form1_1">
+				FSE Id : <input type="text" name="fse"><br><br>
+				<input type="button" onclick="done1_1()" value="Done">
+			</form>
+		</div>
+		
+		<!--<div style="width: 360px;height:300px;position: absolute;top: 25%;right: 2%;">-->
+		<p id="total"></p>
+		<p id="rad"></p>
+		<p></p>
+		<p></p>
+		</div>
+
+	</body>
+</html>
+
+<!---------------------main code ends here-------------------------------------------------------------------------------------->
+
+<!------------------------documentation----------------------------------------------------------------------------------------->
+<!--
+1. main.js
+	
+	go() 	     - called after selecting city, it then calls initialize()
+	initialize() - displays map with selected city
+	
+2. opt_1.js
+	
+	opt1()        - called when selected option 1 after defining polygon, it calls initailize1()
+	initialize1() - displays map with selected polygon area with editable markers
+	getid()       - specifies unique id for each marker and also for the marker that is clicked at an instant
+	done1_1()     - called when user clicks done button after specifing fse id and day of working to be marked
+	
+3. opt_2.js
+	
+	opt2()           - called when selected option 2 after defining polygon, it calls initailize2()
+	initialize2()    - displays map with selected polygon area
+	getid()          - specifies unique id for each marker and also for the marker that is clicked at an instant
+	reset_form2_1()  - resets values of form2_1
+	submit_form2_1() - submits values of form2_1, it calls without_kro()
+	without_kro      - if kro is not taken into account, it makes groups based on no. of fses
+	addMoreKro()     - for adding kros
+	done2_1()        - called when user clicks done button after adding kros, it calls with_kro()
+	with_kro()       - if kro is taken into account, it makes groups based on no. of fses and kros as well, it calls mark_kro()
+	mark_kro()       - specifies kro separately from other outlets
+	done2_2()        - called when user clicks done button after specifing frequency of visit, it calls freq_distr()
+	freq_distr()     - based on specified frequencies of visit, it further makes groups based on no. of fses and also working days
+	display()        - used to change and display the changed markers and divided groups at different instances
+																																	
+																																	-->
+<!------------------------ documentation over  --------------------------------------------------------------------------------------->
